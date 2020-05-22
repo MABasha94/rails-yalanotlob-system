@@ -1,0 +1,83 @@
+<html>
+<head>
+  <style>
+    body{
+      margin-left: 500px;
+      margin-top: 80px;
+    }
+    .form-group{
+      width: 450px;
+    }
+      .makeborder{
+        border: 2px solid lightgray;
+        width: 550px;
+        border-radius: 10px;
+        padding: 45px;
+      }
+      .submitborder{
+        border-radius: 20px;
+        width: 150px;
+      }
+    .submitborder:hover{
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+
+
+<%- flash.each do |name, msg| -%>
+    <%= content_tag :div, msg, class: "alert alert-danger", :style => "margin-right:500px;text-align:center;margin-left:100px;", :id => "flash_#{name}" if msg.is_a?(String) %>
+<%- end -%>
+
+<h2>Log in</h2>
+
+<div class="makeborder">
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="field form-group">
+        <%= f.label :email %><br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
+      </div>
+
+      <div class="field form-group">
+        <%= f.label :password %><br />
+        <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+          <div class="field form-group">
+            <%= f.check_box :remember_me %>
+            <%= f.label :remember_me %>
+          </div>
+      <% end %>
+      <div style="display:flex; flex-direction:row;">
+      <div class="actions">
+        <%= f.submit "Log in", class: "btn btn-success btn-lg submitborder" %>
+      </div>
+
+      <div class="actions">
+        <%= link_to "OR New User", new_user_registration_path, class: "btn btn-success btn-lg submitborder", :style => "width:200px;margin-left:50px" %>
+      </div>
+      </div>
+      <div style="display:flex;flex-direction:row;margin-top:30px;margin-left:150px">
+        <div class="actions">
+          <%= link_to "auth/facebook" do%>
+            <%= image_tag('/facebook.png', width: '45', height: '45') %>
+          <%end%>
+        </div>
+
+        <div class="actions">
+          <%= link_to "auth/google_oauth2" do %>
+            <%= image_tag('/google.png', width: '40', height: '40', :style => "margin-top:3px;margin-left:10px;") %>
+          <%end%>
+        </div>
+      </div>
+
+  <% end %>
+
+</div>
+</body>
+</html>

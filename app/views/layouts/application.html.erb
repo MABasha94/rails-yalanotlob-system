@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>YalaNotlobSystem</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body style="overflow-x: hidden;">
+  <% if user_signed_in? %>
+      <nav class="navbar navbar-expand-lg navbar-light" style="background: lightgray">
+        <a class="navbar-brand" href=<%= root_path%>>Yala-Notlob</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a href="<%= root_path%>" class="btn btn-warning nav-link" >Home</a>
+            </li>
+            <li class="nav-item active">
+              <a href="<%=friends_path%>" class="btn btn-warning nav-link" >Friends</a>
+            </li>
+            <li class="nav-item active">
+              <a href="<%=groups_path%>" class="btn btn-warning nav-link" >Groups</a>
+            </li>
+            <li class="nav-item active">
+              <a href="<%=orders_path%>" class="btn btn-warning nav-link" >Orders</a>
+              </li>
+            <li class="nav-item active">
+              <a href="<%=new_order_path%>" class="btn btn-warning nav-link" >new order</a>
+            </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+                  <li class="nav-item btn-group active ml-auto" data-behavior="notifications" data-notifications='<%= render template: "notifications/index", formats: [:json] %>'>
+                    <a class="dropdown-toggle nav-link" type="button" data-behavior="notifications-link" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="false" aria-expanded="true">
+                      <span class='bell'><%= fa_icon "bell" %></span> <span class='has-badge' data-behavior="unread-count"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu1" data-behavior="notification-items">
+                    </div>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class='active ml-auto'>
+                    <%= image_tag current_user.avatar.url, :style => "width: 50px; height: 50px; border-radius: 50%; margin-right: 10px" %>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class='active ml-auto'>
+                    <h6 class="mt-2" style='font-size: 20px'><%= current_user.name %></h6>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class='active ml-auto'>
+                    <%= link_to "edit profile", edit_user_registration_path, method: "get", class: "btn btn-primary btn-md", :style => "margin-right:10px;margin-left:10px" %>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class='active ml-auto'>
+                    <%= link_to "logout", destroy_user_session_path, method: "get", class: "btn btn-danger btn-md" %>
+                  </li>
+                </ul>
+        </div>
+      </nav>
+  <% end %>
+  <div class="container">
+    <%= yield %>
+  </div>
+  </body>
+</html>

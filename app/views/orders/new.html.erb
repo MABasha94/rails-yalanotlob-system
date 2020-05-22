@@ -1,0 +1,178 @@
+<%= form_for @order, url: orders_path, html: {multipart: true}, local: true do |form| %>
+    <div class="row mt-3">
+    
+        <div class="col">
+    
+            <div class="form-group">
+                <label for="orderTypeControlSelect1">Order for</label>
+                <select name="order_for" class="form-control" id="selectTypeControlSelect1">
+                    <option>Breakfast</option>
+                    <option>Lunch</option>
+                    <option>Dinner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="restaurantControlInput1">From</label>
+                <input name="restaurant_name" type="text" class="form-control" id="restaurantControlInput1" placeholder="Write restaurant name...">
+            </div>
+
+            <div class="form-group dropdown">
+                <label for="friendControlInput1">Friends</label>
+                <div id="myDropdown" class="dropdown-content show">
+                    <input type="text" placeholder="Let's invite.." id="myInput" onkeyup="filterFunction()">
+                    <div id="results">
+                    </div>
+                </div>
+            </div> 
+            <div class="form-group">
+            <%= form.file_field :image, class: "form-control", class:'btn btn-warning' %>
+            </div>
+            <%= form.submit type:'submit', class:'btn btn-success btn-block'%>
+    
+        </div>
+        <div class="col card">
+            <h3 style="margin-left:150px;margin-top:20px;color:blue;">Your Invited Friends</h3>
+            <div id="invited" class="row">
+    
+            <div>
+    
+        <div>
+    
+    </div>
+    <%end%>
+
+    <script>
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function filterFunction() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    div = document.getElementById("myDropdown");
+    results = document.getElementById('results');
+    invited = document.getElementById('invited');
+
+    $.get( `/friends/search/${input.value}`, function(data) {
+        a = div.getElementsByTagName("a");
+        results.innerHTML = "";
+        for (i = 0; i < data.message.length; i++) {
+            let a = document.createElement('a');
+            a.innerHTML = data.message[i].name;
+            a.style.cursor = "pointer";
+            a.addEventListener("mouseover", function() {
+            a.style.backgroundColor = "lightblue";
+            });
+            a.addEventListener("mouseout", function() {
+            a.style.backgroundColor = "white";
+            });
+            a.setAttribute("class", "result");
+            a.setAttribute("id", data.message[i].id);
+            a.addEventListener("click", () => {
+                let added = document.getElementsByClassName(`card w-30 ${a.getAttribute('id')}`)[0];
+                let add = true;
+
+                if(added){
+                    added.remove();
+                }else{
+                    let card = document.createElement('div');
+                    card.style.marginLeft = "50px";
+                    card.setAttribute('class', `${a.getAttribute('id')}`);
+                    let img = document.createElement('img');
+                    img.setAttribute('class', 'card-img-top');
+                    img.style.marginLeft = "30px";
+                    let card_body = document.createElement('div');
+                    card_body.setAttribute('class', 'card-body');
+                    let h5 = document.createElement('h5');
+                    h5.setAttribute('class', 'card-title');
+                    h5.innerHTML = a.innerHTML;
+                    let btn = document.createElement('a');
+                    btn.setAttribute('class', 'btn btn-danger');
+                    btn.style.color = "white";
+                    btn.addEventListener("mouseover", function() {
+                        btn.style.backgroundColor = "orange";
+                        btn.style.color = "black";
+                    });
+                    btn.addEventListener("mouseout", function() {
+                        btn.style.backgroundColor = "red";
+                        btn.style.color = "white";
+                    });
+                    btn.innerHTML = 'remove';
+                    let hidden = document.createElement('input');
+                    hidden.setAttribute('type', 'hidden');
+                    if(data.type == "friend"){
+                        groupsAdded = document.getElementsByClassName('groups[]');
+                        
+                        if(groupsAdded.length > 0){
+                            add = false;
+                            $('.errorMsg').html('<li id="last" class="alert alert-danger" role="alert"><b>sorry, add friend or group only</b></li>');
+                            $(".alert").fadeOut(7000);
+                        }else{
+                            hidden.setAttribute('name', 'id[]');
+                            hidden.setAttribute('class', 'id[]');
+                        }
+                    
+                    }else{
+                        idsAdded = document.getElementsByClassName('id[]');
+
+                        if(idsAdded.length > 0){
+                            add = false;
+                            $('.errorMsg').html('<li id="last" class="alert alert-danger" role="alert"><b>sorry, add friend or group only</b></li>');
+                            $(".alert").fadeOut(7000);
+                        }else{
+                            hidden.setAttribute('name', 'groups[]');
+                            hidden.setAttribute('class', 'groups[]');
+                        }
+                       
+                    }
+
+                    hidden.value = a.getAttribute('id');
+
+                    card_body.append(h5);
+                    card_body.append(btn);
+                    card_body.append(hidden);
+
+                    
+                    card.append(img);
+                    card.append(card_body);
+                    if(add){
+                        invited.append(card);
+                        a.remove();
+    
+                        btn.addEventListener('click', () => {
+                            card.remove();
+                        });
+                    }
+                   
+                }
+            });
+            results.append(a);
+        }
+    });
+    
+} 
+
+function searchByMail(){
+    var input;
+    input = document.getElementById("myInput");
+    div = document.getElementById("myDropdown");
+    results = document.getElementById('results');
+    results.classList.remove('d-none');
+
+    $.get( `/friends/search-by-mail/${input.value}`, function(data) {
+        a = div.getElementsByTagName("a");
+        results.innerHTML = "";
+        console.log(data.message[0]);
+        for (i = 0; i < data.message.length; i++) {
+            let a = document.createElement('a');
+            a.innerHTML = data.message[i][1];
+            a.setAttribute("class", "result");
+            a.setAttribute("id", data.message[i][0]);
+            a.setAttribute("data-email", data.message[i][4]);
+            a.addEventListener("click", () => {
+                input.value = a.getAttribute("data-email");
+                results.setAttribute("class", "d-none");
+            })
+            results.append(a);
+        }
+    })
+}
+    </script>
